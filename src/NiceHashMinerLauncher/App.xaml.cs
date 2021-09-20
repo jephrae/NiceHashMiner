@@ -199,6 +199,7 @@ namespace NiceHashMiner
             ClearAllDoFiles();
             // Set shutdown mode back to default
             ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            bool isFirstRun = true;
             var isUpdater = Environment.GetCommandLineArgs().Contains("-update");
             var isUpdated = Environment.GetCommandLineArgs().Contains("-updated");
             if (isUpdater)
@@ -311,10 +312,12 @@ namespace NiceHashMiner
                     run = false;
                     try
                     {
+                        if (!isFirstRun) startInfo.Arguments = startInfo.Arguments.Replace("-updated", "");
                         using (var niceHashMiner = new Process { StartInfo = startInfo })
                         {
                             var hasStarted = niceHashMiner?.Start();
                             niceHashMiner?.WaitForExit();
+                            isFirstRun = false;
                             // TODO 
                             Console.WriteLine(niceHashMiner.ExitCode);
                             //in case of crash try to restart the program
